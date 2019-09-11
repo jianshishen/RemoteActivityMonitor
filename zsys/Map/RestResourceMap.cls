@@ -19,6 +19,7 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 	ClassMethod Update() as %Status{
 		set statusData={}.%FromJSON($Get(%request.Data("StatusData",1)))
 		
+		// Create server if not exist
 		if ('..IsServerExist(statusData.SystemId)){
 			set newServer=##class(zsys.RAM.OperationalServers).%New()
 			set newServer.SystemId=statusData.SystemId
@@ -29,6 +30,7 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 			}
 		}
 		
+		// Trigger business service
         set status = ##class(Ens.Director).CreateBusinessService("StatusDataService",.instance)
         if $$$ISOK(status) {
                #dim response as %DynamicObject
@@ -41,6 +43,7 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 				}
         }
 		
+		// Persist data in DocDB
 		if ('$SYSTEM.DocDB.Exists("OperServers")){
 			do ##class(%DocDB.Database).%CreateDatabase("OperServers")
 			do db.%CreateProperty("SystemId","%String","$.SystemId",0)
@@ -50,6 +53,7 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 		
 		set server=##class(zsys.RAM.OperationalServers).SystemIdIdxOpen(statusData.SystemId)
 
+		// Send reponse with groupname and attributes
 		set response={}
 		set response.GroupName=server.Groups.GroupName
 		set response.Attributes=server.Attributes
@@ -128,12 +132,6 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 		set saveStatus = server.%Save()
 		if $$$ISERR(saveStatus){
 			do $system.OBJ.DisplayError()
-			if ($system.Status.GetErrorCodes(saveStatus)="5808"){
-				set %response.Status=400
-				do $system.OBJ.DisplayError()
-				w "The name is not unique."
-				return $$$OK
-			}
 		}
 		
 		set server=""
@@ -167,14 +165,6 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
  				set saveStatus = server.%Save()
  				if $$$ISERR(saveStatus){
  					do $system.OBJ.DisplayError()
- 					if ($system.Status.GetErrorCodes(saveStatus)="5808"){
- 						set %response.Status=400
- 						do $system.OBJ.DisplayError()
- 						w "The name is not unique."
-						set server=""
-						set group=""
- 						return $$$OK
- 					}
 				}
 				set server=""
 				set group=""
@@ -285,12 +275,6 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 		set saveStatus = server.%Save()
 		if $$$ISERR(saveStatus){
 			do $system.OBJ.DisplayError()
-			if ($system.Status.GetErrorCodes(saveStatus)="5808"){
-				set %response.Status=400
-				do $system.OBJ.DisplayError()
-				w "The name is not unique."
-				return $$$OK
-			}
 		}
 		
 		set server=""
@@ -313,12 +297,6 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 		set saveStatus = server.%Save()
 		if $$$ISERR(saveStatus){
 			do $system.OBJ.DisplayError()
-			if ($system.Status.GetErrorCodes(saveStatus)="5808"){
-				set %response.Status=400
-				do $system.OBJ.DisplayError()
-				w "The name is not unique."
-				return $$$OK
-			}
 		}
 		
 		set server=""
@@ -351,37 +329,37 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 		return $$$OK
 	}
 	
-	ClassMethod LoopThroughTable(TableName,ID=-1){
-		write !,"Showing data from table "_TableName_":"
-		set table="zsys_RAM."_TableName
-		set tStatement=##class(%SQL.Statement).%New()
-		set qStatus=tStatement.%Prepare("select * from "_table)
-		IF qStatus'=1 {WRITE "%Prepare failed:" DO $System.Status.DisplayError(qStatus) QUIT}
-		set rset=tStatement.%Execute()
-		
-		while rset.%Next(){
-
-			if ID'=-1{
-				if ID'=rset.%GetData(1){
-					continue
-				}
-			 }
-			
-			for x=1:1:tStatement.%Metadata.columns.Count() {
-				SET column=tStatement.%Metadata.columns.GetAt(x)
-				
-				if column.ODBCType=-5{
-					if column.colName'="ID"{
-					do ..LoopThroughTable(column.colName,rset.%GetData(x))
-					}
-				}
-				
-				WRITE !,x," ",column.colName," is data type ",column.ODBCType," with a value of ",rset.%GetData(x)
-			}
-		}
-		
-		w !,"End of table "_TableName
-	}
+ //	ClassMethod LoopThroughTable(TableName,ID=-1){
+ //		write !,"Showing data from table "_TableName_":"
+ //		set table="zsys_RAM."_TableName
+ //		set tStatement=##class(%SQL.Statement).%New()
+ //		set qStatus=tStatement.%Prepare("select * from "_table)
+ //		IF qStatus'=1 {WRITE "%Prepare failed:" DO $System.Status.DisplayError(qStatus) QUIT}
+ //		set rset=tStatement.%Execute()
+ //		
+ //		while rset.%Next(){
+ //
+ //			if ID'=-1{
+ //				if ID'=rset.%GetData(1){
+ //					continue
+ //				}
+ //			 }
+ //			
+ //			for x=1:1:tStatement.%Metadata.columns.Count() {
+ //				SET column=tStatement.%Metadata.columns.GetAt(x)
+ //				
+ //				if column.ODBCType=-5{
+ //					if column.colName'="ID"{
+ //					do ..LoopThroughTable(column.colName,rset.%GetData(x))
+ //					}
+ //				}
+ //				
+ //				WRITE !,x," ",column.colName," is data type ",column.ODBCType," with a value of ",rset.%GetData(x)
+ //			}
+ //		}
+ //		
+ //		w !,"End of table "_TableName
+ //	}
 	
 	ClassMethod IsServerExist(SystemId) as %Boolean{
 		set server=##class(zsys.RAM.OperationalServers).SystemIdIdxOpen(SystemId)

@@ -4,6 +4,7 @@ Class zsys.RAM.Instance
 	ClassMethod Cycle(){
 		set serverDataInstance=##class(zsys.RAM.ServerData).%OpenId(1)
 		
+		// Create a server if not exist
     	if (serverDataInstance=""){
     		set serverDataInstance = ##class(zsys.RAM.ServerData).%New()
     		set serverDataInstance.LastHomeResponse={}
@@ -14,6 +15,7 @@ Class zsys.RAM.Instance
 		set collection={}
 		set iter = serverDataInstance.Attributes.%GetIterator()
 		
+		// Loop through the array of attribute names and collect
     	while iter.%GetNext(.key, .value){
     		set nameValuePair=$CLASSMETHOD(value,"getValue")
     		do collection.%Set(nameValuePair.Name,nameValuePair.Value)
@@ -27,25 +29,27 @@ Class zsys.RAM.Instance
     	do collection.%Set("Attributes",serverDataInstance.Attributes.%ToJSON())
     	do collection.%Set("SystemId",$SYSTEM)
     	
+    	// Create http request
     	set httprequest=##class(%Net.HttpRequest).%New()
 		set httprequest.Server="AU7490GRAD03"
 		set httprequest.Port="52773"
- 
 		do httprequest.InsertFormData("StatusData",collection.%ToJSON())
- //		do httprequest.InsertFormData("IPAddress",$SYSTEM.INetInfo.HostNameToAddr($SYSTEM.INetInfo.LocalHostName(),1))
 		set requestStatus=httprequest.Post("/v1/ram/update")
 		
 		if $$$ISERR(requestStatus){
 			do $system.OBJ.DisplayError()
 		}else{
+			// Read response
 			set res=httprequest.HttpResponse.Data.Read()
 			set response={}.%FromJSON(res)
 			set serverDataInstance.LastHomeResponse=response
 			
+			// Change new group name if necessary
 			if (response.%Get("GroupName")'=serverDataInstance.GroupName || ""){
 				set serverDataInstance.GroupName=response.%Get("GroupName")
 			}
 			
+			// Change new attributes if necessary
 			if (response.%Get("Attributes")'=serverDataInstance.Attributes){
 				set serverDataInstance.Attributes=[].%FromJSON(response.%Get("Attributes"))
 			}

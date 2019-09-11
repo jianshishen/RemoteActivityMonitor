@@ -20,12 +20,12 @@ Method OnProcessInput(pInput As %RegisteredObject, Output pOutput As %Registered
     			}
     		}
     		
-    		if (key="HostName"){
-				set pOutput=##class(zsys.Request.HostNameCheckRequest).%New()
-				set pOutput.SystemID=pInput.SystemId
-				set pOutput.HostName=value
-				set tSC=..SendRequestAsync("ExamineHostName",pOutput)
-    		}
+ //    		if (key="HostName"){
+ //				set pOutput=##class(zsys.Request.HostNameCheckRequest).%New()
+ //				set pOutput.SystemID=pInput.SystemId
+ //				set pOutput.HostName=value
+ //				set tSC=..SendRequestAsync("ExamineHostName",pOutput)
+ //    		}
     		
     	}
 

@@ -31,6 +31,8 @@ Class zsys.RAM.Alerts Extends %Persistent
 			
 				// Detected a log
 				if (line?2N1"/"2N1"/"2N1"-".E){
+				
+					// Check if the alert has been recorded before
 					set currentTimeStamp=$zdth($PIECE(line,"-",1)_" "_$PIECE($PIECE(line,"-",2),":",1)_":"_$PIECE($PIECE(line,"-",2),":",2)_":"_$PIECE($PIECE(line,"-",2),":",3))
 					if (..ifDate1LaterthanDate2(..LastAlertsTimeStamp,currentTimeStamp)) continue
 					set ..LastAlertsTimeStamp=currentTimeStamp
@@ -65,6 +67,7 @@ Class zsys.RAM.Alerts Extends %Persistent
 						set warning=""
 					}
 					
+					// Check if the alert has been recorded before
 					set currentTimeStamp=$zdth($PIECE(line,"-",1)_" "_$PIECE($PIECE(line,"-",2),":",1)_":"_$PIECE($PIECE(line,"-",2),":",2)_":"_$PIECE($PIECE(line,"-",2),":",3))
 					if (..ifDate1LaterthanDate2(..LastAlertsTimeStamp,currentTimeStamp)) {
 						set phase=1

@@ -2,6 +2,7 @@ Class zsys.RAM.Alerts Extends %Persistent
 {
 
 	Property LastAlertsTimeStamp as %String [InitialExpression="0,0"];
+	Property LastEmailTimeStamp as %String [InitialExpression="0,0"];
 	Property Alerts as %DynamicObject;
 	Property Warnings as %DynamicObject;
 	
@@ -60,11 +61,9 @@ Class zsys.RAM.Alerts Extends %Persistent
 				if (line?2N1"/"2N1"/"2N1"-".E){
 					
 					if (alertType){
- //						do ..Alerts.%Push(alert)
  						do ..Alerts.%Set($PIECE(alert," ",1),alert)
 						set alert=""
 					}else{
- //						do ..Warnings.%Push(warning)
 						do ..Warnings.%Set($PIECE(warning," ",1),warning)
 						set warning=""
 					}
@@ -94,11 +93,9 @@ Class zsys.RAM.Alerts Extends %Persistent
 				// Found a new chunk
 				}elseif($FIND(line,"***")=4){
 					if (alertType){
- //						do ..Alerts.%Push(alert)
 						do ..Alerts.%Set($PIECE(alert," ",1),alert)
 						set alert=""
 					}else{
- //						do ..Warnings.%Push(warning)
  						do ..Warnings.%Set($PIECE(warning," ",1),warning)
 						set warning=""
 					}
@@ -112,7 +109,6 @@ Class zsys.RAM.Alerts Extends %Persistent
 						set warning=warning_line
 					}
 				}
-				
 			}
 		}
 	}
@@ -131,6 +127,9 @@ Class zsys.RAM.Alerts Extends %Persistent
 </Value>
 <Value name="2">
 <Value>LastAlertsTimeStamp</Value>
+</Value>
+<Value name="3">
+<Value>LastEmailTimeStamp</Value>
 </Value>
 </Data>
 <Data name="Warnings">

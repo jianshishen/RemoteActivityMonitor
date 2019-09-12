@@ -14,7 +14,7 @@ Method AlertSendAndPersist(pRequest As zsys.Request.EmailAlertRequest, Output pR
 	Set tMailMessage=##class(%Net.MailMessage).%New()
 	set tMailMessage.From = "intersystemslog@gmail.com"
 	Do tMailMessage.To.Insert(pRequest.Destination)
-	Set tMailMessage.Subject="ALERT!!!"
+	Set tMailMessage.Subject=pRequest.Subject
 	set tMailMessage.Charset="UTF-8"
 	Set tSC=tMailMessage.TextData.Write(pRequest.Text)  Quit:$$$ISERR(tSC) tSC
 	Set tSC=..Adapter.SendMail(tMailMessage)

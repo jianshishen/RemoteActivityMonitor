@@ -2,14 +2,14 @@ Class zsys.RAM.Alerts Extends %Persistent
 {
 
 	Property LastAlertsTimeStamp as %String [InitialExpression="0,0"];
-	Property Alerts as %DynamicArray;
-	Property Warnings as %DynamicArray;
+	Property Alerts as %DynamicObject;
+	Property Warnings as %DynamicObject;
 	
 	ClassMethod ifDate1LaterthanDate2(date1,date2) as %Boolean{
 		return ($piece(date1,",")*86400+$p(date1,",",2))>($p(date2,",")*86400+$p(date2,",",2))
 	}
 	
-	Method ExtractAlerts(pInput As %Stream.FileCharacter)
+	Method ExtractAlerts(pInput)
 	{
 		set phase=0
 		set alert=""
@@ -27,7 +27,7 @@ Class zsys.RAM.Alerts Extends %Persistent
 				}
 				
 			// Find an alert
-			}elseif(phase=1){
+			}elseif (phase=1){
 			
 				// Detected a log
 				if (line?2N1"/"2N1"/"2N1"-".E){
@@ -60,10 +60,12 @@ Class zsys.RAM.Alerts Extends %Persistent
 				if (line?2N1"/"2N1"/"2N1"-".E){
 					
 					if (alertType){
-						do ..Alerts.%Push(alert)
+ //						do ..Alerts.%Push(alert)
+ 						do ..Alerts.%Set($PIECE(alert," ",1),alert)
 						set alert=""
 					}else{
-						do ..Warnings.%Push(warning)
+ //						do ..Warnings.%Push(warning)
+						do ..Warnings.%Set($PIECE(warning," ",1),warning)
 						set warning=""
 					}
 					
@@ -92,10 +94,12 @@ Class zsys.RAM.Alerts Extends %Persistent
 				// Found a new chunk
 				}elseif($FIND(line,"***")=4){
 					if (alertType){
-						do ..Alerts.%Push(alert)
+ //						do ..Alerts.%Push(alert)
+						do ..Alerts.%Set($PIECE(alert," ",1),alert)
 						set alert=""
 					}else{
-						do ..Warnings.%Push(warning)
+ //						do ..Warnings.%Push(warning)
+ 						do ..Warnings.%Set($PIECE(warning," ",1),warning)
 						set warning=""
 					}
 					set phase=1
@@ -107,8 +111,8 @@ Class zsys.RAM.Alerts Extends %Persistent
 					}else{
 						set warning=warning_line
 					}
-					
 				}
+				
 			}
 		}
 	}

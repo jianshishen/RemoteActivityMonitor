@@ -12,6 +12,8 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 		<Route Url="/attributes/:serverIP/:attributes" Method="PUT" Call="PutAttributesIntoServer"/>
 		<Route Url="/attributes/:serverIP" Method="GET" Call="PutDefaultAttributesIntoServer"/>
 		<Route Url="/servers" Method="GET" Call="GetAllServers"/>
+		<Route Url="/alerts" Method="GET" Call="GetAllAlerts"/>
+		<Route Url="/alerts/:type/:timeStamp" Method="DELETE" Call="DeleteAnAlert"/>
 		</Routes>
 	}
 
@@ -324,8 +326,46 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 	}
 	
 	// Return with status code
-	ClassMethod GetAllServers() as %Status{
+	ClassMethod GetAllServers() as %String{
 		w ..GetServers()
+		return $$$OK
+	}
+	
+	// Retrieve all alerts
+	ClassMethod GetAlerts() as %String{
+		Set q1="SELECT * "
+		Set q2="FROM zsys_RAM.Alerts"
+		Set myquery=q1_q2
+		SET tStatement = ##class(%SQL.Statement).%New()
+		SET qStatus = tStatement.%Prepare(myquery)
+		IF qStatus'=1 {WRITE "%Prepare failed:" DO $System.Status.DisplayError(qStatus) QUIT}
+		SET rset = tStatement.%Execute()
+		
+		set results={}
+		
+		while rset.%Next() {
+			do results.%Set("Alerts",{}.%FromJSON(rset.Alerts))
+			do results.%Set("Warnings",{}.%FromJSON(rset.Warnings))
+		}
+		
+		return results.%ToJSON()
+	}
+	
+	// Return all system alerts
+	ClassMethod GetAllAlerts() as %Status{
+		w ..GetAlerts()
+		return $$$OK
+	}
+	
+	// Delete one alert
+	ClassMethod DeleteAnAlert(type,timeStamp) as %Status{
+		set alerts=##class(zsys.RAM.Alerts).%OpenId(1)
+		if (type){
+			do alerts.Alerts.%Remove(timeStamp)
+		}else{
+			do alerts.Warnings.%Remove(timeStamp)
+		}
+		do alerts.%Save()
 		return $$$OK
 	}
 	

@@ -1,16 +1,19 @@
 Class zsys.RAM.Alerts Extends %Persistent
 {
 
-	Property LastAlertsTimeStamp as %String;
+	Property LastAlertsTimeStamp as %String [InitialExpression="0,0"];
 	Property Alerts as %DynamicArray;
 	Property Warnings as %DynamicArray;
+	
+	ClassMethod ifDate1LaterthanDate2(date1,date2) as %Boolean{
+		return ($piece(date1,",")*86400+$p(date1,",",2))>($p(date2,",")*86400+$p(date2,",",2))
+	}
 	
 	Method ExtractAlerts(pInput As %Stream.FileCharacter)
 	{
 		set phase=0
 		set alert=""
 		set warning=""
-		set timestamp=""
 		set alertType=$$$YES
 		
 		// Loop through the stream
@@ -28,7 +31,10 @@ Class zsys.RAM.Alerts Extends %Persistent
 			
 				// Detected a log
 				if (line?2N1"/"2N1"/"2N1"-".E){
-
+					set currentTimeStamp=$zdth($PIECE(line,"-",1)_" "_$PIECE($PIECE(line,"-",2),":",1)_":"_$PIECE($PIECE(line,"-",2),":",2)_":"_$PIECE($PIECE(line,"-",2),":",3))
+					if (..ifDate1LaterthanDate2(..LastAlertsTimeStamp,currentTimeStamp)) continue
+					set ..LastAlertsTimeStamp=currentTimeStamp
+					
 					// Start recording if the status code is 2
 					if ($PIECE(line," ",3)="2"){
 						set phase=2
@@ -58,6 +64,13 @@ Class zsys.RAM.Alerts Extends %Persistent
 						do ..Warnings.%Push(warning)
 						set warning=""
 					}
+					
+					set currentTimeStamp=$zdth($PIECE(line,"-",1)_" "_$PIECE($PIECE(line,"-",2),":",1)_":"_$PIECE($PIECE(line,"-",2),":",2)_":"_$PIECE($PIECE(line,"-",2),":",3))
+					if (..ifDate1LaterthanDate2(..LastAlertsTimeStamp,currentTimeStamp)) {
+						set phase=1
+						continue
+					}
+					set ..LastAlertsTimeStamp=currentTimeStamp
 						
 					// Start recording if the status code is 2
 					if ($PIECE(line," ",3)="2"){

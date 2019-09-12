@@ -360,6 +360,7 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 	// Delete one alert
 	ClassMethod DeleteAnAlert(type,timeStamp) as %Status{
 		set alerts=##class(zsys.RAM.Alerts).%OpenId(1)
+		set timeStamp=$P(timeStamp,"-",1)_"/"_$P(timeStamp,"-",2)_"/"_$P(timeStamp,"-",3)_"-"_$P(timeStamp,"-",4)
 		if (type){
 			do alerts.Alerts.%Remove(timeStamp)
 		}else{

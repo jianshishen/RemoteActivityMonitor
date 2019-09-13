@@ -1,8 +1,18 @@
 Class zsys.RAM.HomeData Extends %Persistent
 {
+	Property SystemId as %String;
 	Property StatusData as %DynamicObject;
 	Property GroupName as %String;
 	Index GroupIdx on GroupName;
+	
+	Method PersistToDocDB(){
+		if ('$SYSTEM.DocDB.Exists("OperServers")){
+			do ##class(%DocDB.Database).%CreateDatabase("OperServers")
+			do db.%CreateProperty("SystemId","%String","$.SystemId",0)
+		}
+		set db = ##class(%DocDB.Database).%GetDatabase("OperServers")
+		do db.%SaveDocument(..StatusData)
+	}
 
 Storage Default
 {
@@ -11,11 +21,16 @@ Storage Default
 <Value>%%CLASSNAME</Value>
 </Value>
 <Value name="2">
-<Value>StatusData</Value>
+<Value>SystemId</Value>
 </Value>
 <Value name="3">
 <Value>GroupName</Value>
 </Value>
+</Data>
+<Data name="StatusData">
+<Attribute>StatusData</Attribute>
+<Structure>node</Structure>
+<Subscript>"StatusData"</Subscript>
 </Data>
 <DataLocation>^zsys.RAM.HomeDataD</DataLocation>
 <DefaultData>HomeDataDefaultData</DefaultData>

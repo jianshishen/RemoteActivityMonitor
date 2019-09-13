@@ -45,13 +45,13 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 				}
         }
 		
-		// Persist data in DocDB
-		if ('$SYSTEM.DocDB.Exists("OperServers")){
-			do ##class(%DocDB.Database).%CreateDatabase("OperServers")
-			do db.%CreateProperty("SystemId","%String","$.SystemId",0)
-		}
-		set db = ##class(%DocDB.Database).%GetDatabase("OperServers")
-		do db.%SaveDocument(statusData.%ToJSON())
+		// Persist status data to DocDB
+        set homeData=##class(zsys.RAM.HomeData).%New()
+        set homeData.SystemId=statusData.SystemId
+        set homeData.GroupName=statusData.GroupName
+        set homeData.StatusData=statusData
+        do homeData.PersistToDocDB()
+        do homeData.%Save()
 		
 		set server=##class(zsys.RAM.OperationalServers).SystemIdIdxOpen(statusData.SystemId)
 

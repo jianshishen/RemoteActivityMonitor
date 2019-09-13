@@ -12,21 +12,27 @@ Method AlertSendAndPersist(pRequest As zsys.Request.EmailAlertRequest, Output pR
 
 	If pRequest.Destination="" $$$TRACE("no email address.") Quit $$$OK
 	Set tMailMessage=##class(%Net.MailMessage).%New()
-	set tMailMessage.From = "intersystemslog@gmail.com"
-	Do tMailMessage.To.Insert(pRequest.Destination)
-	Set tMailMessage.Subject=pRequest.Subject
-	set tMailMessage.Charset="UTF-8"
-	Set tSC=tMailMessage.TextData.Write(pRequest.Text)  Quit:$$$ISERR(tSC) tSC
-	Set tSC=..Adapter.SendMail(tMailMessage)
-
-	if ('$SYSTEM.DocDB.Exists("Alerts")){
-		do ##class(%DocDB.Database).%CreateDatabase("Alerts")
+	
+	set iter = pRequest.Content.%GetIterator()
+	
+	while iter.%GetNext(.key, .value){
+		set tMailMessage.From = "intersystemslog@gmail.com"
+		Do tMailMessage.To.Insert(pRequest.Destination)
+		Set tMailMessage.Subject=pRequest.Subject
+		set tMailMessage.Charset="UTF-8"
+		Set tSC=tMailMessage.TextData.Write(value)
+		Set tSC=..Adapter.SendMail(tMailMessage)
+		if ('$SYSTEM.DocDB.Exists("Alerts")){
+			do ##class(%DocDB.Database).%CreateDatabase("Alerts")
+		}
+		set db = ##class(%DocDB.Database).%GetDatabase("Alerts")
+ 		set emailContent={}
+ 		do emailContent.%Set("Destination",pRequest.Destination)
+ 		do emailContent.%Set("Text",value)
+		do db.%SaveDocument(emailContent)
 	}
-	set db = ##class(%DocDB.Database).%GetDatabase("Alerts")
-	do pRequest.%JSONExportToString(.jsonEvent)
-	do db.%SaveDocument(jsonEvent)
 
-	Quit tSC
+	Quit $$$OK
 }
 
 XData MessageMap {

@@ -31,8 +31,8 @@ Class zsys.RAM.Instance
     	
     	// Create http request
     	set httprequest=##class(%Net.HttpRequest).%New()
-		set httprequest.Server="AU7490GRAD03"
-		set httprequest.Port="52773"
+		set httprequest.Server=$CLASSMETHOD("zsys.RAM.Attribute.HomeServerPort","getValue").Server
+		set httprequest.Port=$CLASSMETHOD("zsys.RAM.Attribute.HomeServerPort","getValue").Port
 		do httprequest.InsertFormData("StatusData",collection.%ToJSON())
 		set requestStatus=httprequest.Post("/v1/ram/update")
 		

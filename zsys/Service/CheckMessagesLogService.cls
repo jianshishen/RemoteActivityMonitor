@@ -21,7 +21,7 @@ Method OnProcessInput(pInput As %Stream.Object, Output pOutput As %RegisteredObj
 	while alertsIterator.%GetNext(.key,.value){
 		if (##class(zsys.RAM.Alerts).ifDate1LaterthanDate2(alerts.LastEmailTimeStamp,$zdth($PIECE(value,"-",1)_" "_$PIECE($PIECE(value,"-",2),":",1)_":"_$PIECE($PIECE(value,"-",2),":",2)_":"_$PIECE($PIECE(value,"-",2),":",3)))) continue
 		set emailAlertRequest=##class(zsys.Request.EmailAlertRequest).%New()
-		set emailAlertRequest.Text=value
+		do emailAlertRequest.Content.%Set(key,value)
 		set tSC=..SendRequestAsync("EMailAlertOperation",emailAlertRequest)
 	}
 	
@@ -29,7 +29,7 @@ Method OnProcessInput(pInput As %Stream.Object, Output pOutput As %RegisteredObj
 	while warningsIterator.%GetNext(.key,.value){
 		if (##class(zsys.RAM.Alerts).ifDate1LaterthanDate2(alerts.LastEmailTimeStamp,$zdth($PIECE(value,"-",1)_" "_$PIECE($PIECE(value,"-",2),":",1)_":"_$PIECE($PIECE(value,"-",2),":",2)_":"_$PIECE($PIECE(value,"-",2),":",3)))) continue
 		set emailAlertRequest=##class(zsys.Request.EmailAlertRequest).%New()
-		set emailAlertRequest.Text=value
+		do emailAlertRequest.Content.%Set(key,value)
 		set emailAlertRequest.Subject="WARNING!!!"
 		set tSC=..SendRequestAsync("EMailAlertOperation",emailAlertRequest)
 	}

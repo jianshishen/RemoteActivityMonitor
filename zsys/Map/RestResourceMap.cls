@@ -208,9 +208,9 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 					do groupCollection.OperationalServers.%Push(server.SystemId)
 					set iter = servers.%GetIterator()
 					
-			    	while iter.%GetNext(.key, .value){
+			    	while iter.%GetNext(.k, .value){
 			    		if (value=server.SystemId){
-			    			do servers.%Remove(key)
+			    			do servers.%Remove(k)
 			    		}
 			    	}
 				}

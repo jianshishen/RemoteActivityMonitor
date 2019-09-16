@@ -13,6 +13,7 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 		<Route Url="/attributes/:serverIP" Method="GET" Call="PutDefaultAttributesIntoServer"/>
 		<Route Url="/servers" Method="GET" Call="GetAllServers"/>
 		<Route Url="/alerts" Method="GET" Call="GetAllAlerts"/>
+		<Route Url="/alerts" Method="POST" Call="PostAnAlert"/>
 		<Route Url="/alerts/:type/:timeStamp" Method="DELETE" Call="DeleteAnAlert"/>
 		</Routes>
 	}
@@ -166,7 +167,10 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
  				do group.OperationalServers.RemoveAt(key)
  				set saveStatus = server.%Save()
  				if $$$ISERR(saveStatus){
- 					do $system.OBJ.DisplayError()
+					set %response.Status=400
+					do $system.OBJ.DisplayError()
+					w "The server is not in this group."
+					return $$$OK
 				}
 				set server=""
 				set group=""
@@ -354,6 +358,23 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 	// Return all system alerts
 	ClassMethod GetAllAlerts() as %Status{
 		w ..GetAlerts()
+		return $$$OK
+	}
+	
+	// Post an alert
+	ClassMethod PostAnAlert() as %Status{
+		set alert={}.%FromJSON($Get(%request.Data("Alert",1)))
+
+		if ('$SYSTEM.DocDB.Exists("Alerts")){
+			do ##class(%DocDB.Database).%CreateDatabase("Alerts")
+		}
+		set db = ##class(%DocDB.Database).%GetDatabase("Alerts")
+		
+ 		set emailContent={}
+ 		do emailContent.%Set("Origin",alert.Origin)
+ 		do emailContent.%Set("Destination",alert.Destination)
+ 		do emailContent.%Set("Text",alert.Text)
+		do db.%SaveDocument(emailContent)
 		return $$$OK
 	}
 	

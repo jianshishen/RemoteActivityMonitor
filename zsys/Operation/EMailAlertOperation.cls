@@ -20,13 +20,14 @@ Method AlertSendAndPersist(pRequest As zsys.Request.EmailAlertRequest, Output pR
 		Do tMailMessage.To.Insert(pRequest.Destination)
 		Set tMailMessage.Subject=pRequest.Subject
 		set tMailMessage.Charset="UTF-8"
-		Set tSC=tMailMessage.TextData.Write(value)
+		Set tSC=tMailMessage.TextData.Write("From "_pRequest.Origin_": "_value)
 		Set tSC=..Adapter.SendMail(tMailMessage)
 		if ('$SYSTEM.DocDB.Exists("Alerts")){
 			do ##class(%DocDB.Database).%CreateDatabase("Alerts")
 		}
 		set db = ##class(%DocDB.Database).%GetDatabase("Alerts")
  		set emailContent={}
+ 		do emailContent.%Set("Origin",pRequest.Origin)
  		do emailContent.%Set("Destination",pRequest.Destination)
  		do emailContent.%Set("Text",value)
 		do db.%SaveDocument(emailContent)

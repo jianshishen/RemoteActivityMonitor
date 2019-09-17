@@ -23,6 +23,18 @@ Method OnProcessInput(pInput As %Stream.Object, Output pOutput As %RegisteredObj
 		set emailAlertRequest=##class(zsys.Request.EmailAlertRequest).%New()
 		do emailAlertRequest.Content.%Set(key,value)
 		set tSC=..SendRequestAsync("EMailAlertOperation",emailAlertRequest)
+		
+ 		set emailContent={}
+ 		do emailContent.%Set("Origin",emailAlertRequest.Origin)
+ 		do emailContent.%Set("Destination",emailAlertRequest.Destination)
+ 		do emailContent.%Set("Text",value)
+		
+    	// Create http request
+    	set httprequest=##class(%Net.HttpRequest).%New()
+		set httprequest.Server=$CLASSMETHOD("zsys.RAM.Attribute.HomeServerPort","getValue").Server
+		set httprequest.Port=$CLASSMETHOD("zsys.RAM.Attribute.HomeServerPort","getValue").Port
+		do httprequest.InsertFormData("Alert",emailContent.%ToJSON())
+		set requestStatus=httprequest.Post("/v1/ram/alerts")
 	}
 	
 	set warningsIterator=alerts.Warnings.%GetIterator()
@@ -32,6 +44,18 @@ Method OnProcessInput(pInput As %Stream.Object, Output pOutput As %RegisteredObj
 		do emailAlertRequest.Content.%Set(key,value)
 		set emailAlertRequest.Subject="WARNING!!!"
 		set tSC=..SendRequestAsync("EMailAlertOperation",emailAlertRequest)
+		
+ 		set emailContent={}
+ 		do emailContent.%Set("Origin",emailAlertRequest.Origin)
+ 		do emailContent.%Set("Destination",emailAlertRequest.Destination)
+ 		do emailContent.%Set("Text",value)
+		
+    	// Create http request
+    	set httprequest=##class(%Net.HttpRequest).%New()
+		set httprequest.Server=$CLASSMETHOD("zsys.RAM.Attribute.HomeServerPort","getValue").Server
+		set httprequest.Port=$CLASSMETHOD("zsys.RAM.Attribute.HomeServerPort","getValue").Port
+		do httprequest.InsertFormData("Alert",emailContent.%ToJSON())
+		set requestStatus=httprequest.Post("/v1/ram/alerts")
 	}
 	
 	set alerts.LastEmailTimeStamp=alerts.LastAlertsTimeStamp

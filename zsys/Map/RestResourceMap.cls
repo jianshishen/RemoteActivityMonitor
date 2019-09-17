@@ -260,7 +260,6 @@ Class zsys.Map.RestResourceMap Extends %CSP.REST
 					if ($system.Status.GetErrorCodes(status)="5001"){
  						set %response.Status=400
  						do $system.OBJ.DisplayError()
- 						w !,"No privilege."
  						return $$$OK
  					}
 					set %response.Status=400

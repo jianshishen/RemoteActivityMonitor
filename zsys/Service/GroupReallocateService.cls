@@ -15,7 +15,7 @@ Method OnProcessInput(pInput As %RegisteredObject, Output pOutput As %Registered
 	if (CheckApprovalObject.CheckApproval){
 		Quit $$$OK
 	}else{
-		Quit $$$ERROR("5001","The group does not have enough privileges.")
+		Quit $$$ERROR("5001","Need Privileges.")
 	}
 }
 

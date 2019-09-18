@@ -3,6 +3,7 @@
 Codes running on IRIS for Remote Activity Monitor. Version IRIS-2019.1.0.510.0-win_x64 (Dev Type, Mini Security)
 
 ## Deployment
+0. Enable DocDB Service.
 
 1. Create a new local database called `RAM`.
 

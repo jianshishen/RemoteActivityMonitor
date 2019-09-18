@@ -10,7 +10,7 @@ Codes running on IRIS for Remote Activity Monitor. Version IRIS-2019.1.0.510.0-w
 
 3. Open a terminal. Switch to `%SYS` namespace. Type `DO ^BACKUP`.
 
-4. Choose 3: `Restore Selected or Renamed Directories`. Input DAT file location, e.g. `C:\FullDBList_20190918_002.cbk`. Use default options for following steps, but make sure the directory for database is correct.
+4. Choose 3: `Restore Selected or Renamed Directories`. Input cbk file location, e.g. `C:\FullDBList_20190918_002.cbk`. Use default options for following steps, but make sure the directory for database is correct.
 
 5. Configure firewall to allow IRIS ports.
 

@@ -17,7 +17,7 @@ Method AlertSendAndPersist(pRequest As zsys.Request.EmailAlertRequest, Output pR
 	
 	while iter.%GetNext(.key, .value){
 	
-		set tMailMessage.From = "intersystemslog@gmail.com"
+		set tMailMessage.From = pRequest.Destination
 		Do tMailMessage.To.Insert(pRequest.Destination)
 		Set tMailMessage.Subject=pRequest.Subject
 		set tMailMessage.Charset="UTF-8"

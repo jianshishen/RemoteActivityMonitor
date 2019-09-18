@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Tasks><Task>
+  <Name>DataCollection</Name>
+  <RunAsUser>UnknownUser</RunAsUser>
+  <EmailOutput>false</EmailOutput>
+  <Expires>true</Expires>
+  <OpenOutputFile>false</OpenOutputFile>
+  <OutputFileIsBinary>true</OutputFileIsBinary>
+  <SuspendOnError>false</SuspendOnError>
+  <Suspended>0</Suspended>
+  <Priority>0</Priority>
+  <TaskClass>%SYS.Task.RunLegacyTask</TaskClass>
+  <Settings>DQFFeGVjdXRlQ29kZScBZG8gIyNjbGFzcyh6c3lzLlJBTS5JbnN0YW5jZSkuQ3ljbGUoKQ==</Settings>
+  <IsBatch>false</IsBatch>
+  <NameSpace>RAM</NameSpace>
+  <TimePeriod>0</TimePeriod>
+  <TimePeriodEvery>1</TimePeriodEvery>
+  <DailyFrequency>1</DailyFrequency>
+  <DailyFrequencyTime>0</DailyFrequencyTime>
+  <DailyIncrement>10</DailyIncrement>
+  <DailyStartTime>00:00:00</DailyStartTime>
+  <DailyEndTime>00:00:00</DailyEndTime>
+  <JobGUID>23E9710C-7786-4C47-829C-A8069A020089</JobGUID>
+  <StartDate>2019-09-16</StartDate>
+  <LastSchedule>65274,59400</LastSchedule>
+  <LastStarted>65274,59400</LastStarted>
+  <LastFinished>65274,59400</LastFinished>
+  <Error>Success</Error>
+  <MirrorStatus>1</MirrorStatus>
+  <Type>2</Type>
+  <RescheduleOnStart>false</RescheduleOnStart>
+  <DeleteAfterRun>false</DeleteAfterRun>
+  <Description>Collect status data every 10 minute</Description>
+</Task>
+
+</Tasks>

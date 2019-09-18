@@ -1,0 +1,14 @@
+%ZSTART
+
+#Define ME "ZSTART"
+#Define BgnSet "Start"
+#Define Empty ""
+
+    ; cannot be invoked directly
+    quit
+
+SYSTEM
+	set $NAMESPACE="RAM"
+	do ##class(zsys.RAM.Instance).Cycle()
+	set $NAMESPACE="%SYS"
+	quit

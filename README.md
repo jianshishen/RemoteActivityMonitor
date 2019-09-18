@@ -14,14 +14,16 @@ Codes running on IRIS for Remote Activity Monitor. Version IRIS-2019.1.0.510.0-w
 
 5. Configure firewall to allow IRIS ports.
 
-6. Configure SSL/TLS for email account in system configuration. Enter the password of email account at private key password. Open class file `zsys.Request.EmailAlertRequest` and replace `InitialExpression` of `Destination` with your own email address.
+6. Create a web application. Name: `/v1/ram/`, Namespace: `RAM`, Enable `REST` Dispatch class: `zsys.Map.RestResourceMap`.
 
-7. Go to business production. Click `Recover` if necessary. Click `EmailAlertOperation` and configure email in basic settings and connection settings. Start the business production.
+7. Configure SSL/TLS for email account in system configuration. Enter the password of email account at private key password. Open class file `zsys.Request.EmailAlertRequest` and replace `InitialExpression` of `Destination` with your own email address.
 
-8. Configure Home Server IP Address and Port number in class file `zsys.RAM.Attribute.HomeServerPort`.
+8. Go to business production. Click `Recover` if necessary. Click `EmailAlertOperation` and configure email in basic settings and connection settings. Start the business production.
 
-9. Enable data collection on system start-up. Create a `ZSTART` routine in `%SYS` namespace. The code can be found in `%ZSTART.mac`.
+9. Configure Home Server IP Address and Port number in class file `zsys.RAM.Attribute.HomeServerPort`.
 
-10. Enable data collection periodically. Import a task in Task Manager. Use the file called `DataCollection.xml`. Click `Run`.
+10. Enable data collection on system start-up. Create a `ZSTART` routine in `%SYS` namespace. The code can be found in `%ZSTART.mac`.
 
-11. Use `DO ##class(zsys.RAM.Instance).Cycle()` to trigger data collection and sending manually.
+11. Enable data collection periodically. Import a task in Task Manager. Use the file called `DataCollection.xml`. Click `Run`.
+
+12. Use `DO ##class(zsys.RAM.Instance).Cycle()` to trigger data collection and sending manually.
